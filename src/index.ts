@@ -12,7 +12,7 @@ async function start() {
         time: 0,
         ball: {
             pos: [-1, 1.8],
-            vel: [0.01, 0]
+            vel: [-0.1, 0]
         }
     };
 
