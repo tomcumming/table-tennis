@@ -42,3 +42,10 @@ export function v2Unit(a: V2): undefined | V2 {
   const u = v2Muls(a, 1 / v2Mag(a));
   return v2Finite(u) ? u : undefined;
 }
+
+/** values >0 indicate norm is pointing at point */
+export function signedDistanceFromPlane(plane: Plane, point: V2): number {
+  const dist = v2Subs(plane.origin, point);
+  const normDist = v2Dot(plane.normal, dist);
+  return normDist * -1;
+}

@@ -8,6 +8,7 @@ import {
   Plane,
   v2Dot,
   v2Mag,
+  signedDistanceFromPlane,
 } from "./math";
 import {
   gravity,
@@ -40,11 +41,18 @@ export function step({ ball, time }: State, maxStep: Seconds): State {
     ),
   };
 
-  const ballTable = ballTableBounce(ball, nextBall, maxStep);
-  if (ballTable) {
+  const bounces = [
+    ballTableBounce(ball, nextBall, maxStep),
+    ballFloorBounce(ball, nextBall, maxStep),
+  ]
+    .flatMap((bounce) => (bounce === undefined ? [] : [bounce]))
+    .sort((a, b) => a.delta - b.delta);
+
+  if (bounces.length > 0) {
+    const bounce = bounces[0];
     return {
-      time: time + ballTable.delta,
-      ball: ballTable.ball,
+      time: time + bounce.delta,
+      ball: bounce.ball,
     };
   }
 
@@ -59,31 +67,75 @@ type BallBounce = {
   ball: Ball;
 };
 
+function ballPlaneBounce(
+  plane: Plane,
+  ball: Ball,
+  nextBall: Ball,
+  step: Seconds,
+  cor: number
+): undefined | BallBounce {
+  const ballDist = signedDistanceFromPlane(plane, ball.pos);
+  const nextBallDist = signedDistanceFromPlane(plane, nextBall.pos);
+
+  if (ballDist >= 0 && nextBallDist <= 0) {
+    const stepDist = ballDist + nextBallDist * -1;
+    const hitPathRatio = ballDist / stepDist;
+    const hitTime = step * hitPathRatio;
+
+    const ballPath = v2Subs(nextBall.pos, ball.pos);
+    const ballHitPos = v2Add(ball.pos, v2Muls(ballPath, hitPathRatio));
+
+    const ballHitVel = v2Add(ball.vel, v2Muls(gravity, hitTime));
+    const impact = v2Muls(plane.normal, -v2Dot(plane.normal, ballHitVel));
+    const bouncedVel = v2Add(impact, v2Muls(impact, cor)); //w
+
+    return {
+      delta: hitTime,
+      ball: {
+        pos: ballHitPos,
+        vel: v2Add(ballHitVel, bouncedVel),
+      },
+    };
+  }
+}
+
 function ballTableBounce(
   ball: Ball,
   nextBall: Ball,
   step: Seconds
 ): undefined | BallBounce {
-  const planeHeight = tableHeight + ballRadius;
+  const bounce = ballPlaneBounce(
+    {
+      origin: [0, tableHeight + ballRadius],
+      normal: [0, 1],
+    },
+    ball,
+    nextBall,
+    step,
+    ballCOR
+  );
 
-  if (ball.pos[1] >= planeHeight && nextBall.pos[1] <= planeHeight) {
-    const ballPath = v2Subs(nextBall.pos, ball.pos);
+  if (
+    bounce &&
+    bounce.ball.pos[0] > tableLength / -2 &&
+    bounce.ball.pos[0] < tableLength / 2
+  )
+    return bounce;
+}
 
-    const hitPathRatio = (planeHeight - ball.pos[1]) / ballPath[1];
-    const hitTime = step * hitPathRatio;
-
-    const ballHitPos = v2Add(ball.pos, v2Muls(ballPath, hitPathRatio));
-    if (ballHitPos[0] >= -tableLength / 2 && ballHitPos[0] <= tableLength / 2) {
-      const ballHitVel = v2Add(ball.vel, v2Muls(gravity, hitTime));
-      const bouncedVel: V2 = [ballHitVel[0], -ballHitVel[1] * ballCOR];
-
-      return {
-        delta: hitTime,
-        ball: {
-          pos: ballHitPos,
-          vel: bouncedVel,
-        },
-      };
-    }
-  }
+function ballFloorBounce(
+  ball: Ball,
+  nextBall: Ball,
+  step: Seconds
+): undefined | BallBounce {
+  return ballPlaneBounce(
+    {
+      origin: [0, ballRadius],
+      normal: [0, 1],
+    },
+    ball,
+    nextBall,
+    step,
+    ballCOR
+  );
 }
