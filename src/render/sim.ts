@@ -3,7 +3,7 @@ import { map } from "rxjs/operators";
 
 import { SubsNode, Cleanup } from "./subsnode";
 import table from "./table";
-import ball from "./ball";
+import ball, { BallState } from "./ball";
 
 import { tableLength, tableHeight } from "../constants";
 import { State } from "../sim/sim";
@@ -36,7 +36,11 @@ export default function sim(state$: Observable<State>): SubsNode {
   svg.appendChild(transformGroup);
 
   transformGroup.appendChild(table(tableLength, tableHeight));
-  transformGroup.appendChild(ball(state$.pipe(map((s) => s.ball))));
+  transformGroup.appendChild(ball(state$.pipe(map(asBallState))));
 
   return svg;
+}
+
+function asBallState({ time, ball }: State): BallState {
+  return { time, ball };
 }

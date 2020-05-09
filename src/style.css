@@ -8,6 +8,8 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    background-color: #222;
 }
 
 .table-tennis .table .surface {
@@ -16,4 +18,16 @@ body {
 
 .table-tennis .table .stand {
     fill: gray;
+}
+
+.table-tennis .ball .current {
+    fill: white;
+}
+
+.table-tennis .ball .path {
+    fill: transparent;
+    stroke: #ffffff33;
+    stroke-width: 0.04;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }

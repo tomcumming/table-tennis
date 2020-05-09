@@ -1,6 +1,6 @@
 import sim from "./render/sim";
-import { from, Observable } from "rxjs";
-import { scan } from 'rxjs/operators';
+import { Observable } from "rxjs";
+import { scan, concatAll } from 'rxjs/operators';
 import { State, Seconds, step } from "./sim/sim";
 
 async function start() {
@@ -16,13 +16,26 @@ async function start() {
         }
     };
 
-    const state$ = animationFrames()
-        .pipe(scan<Seconds, State>((state, delta) => {
-            const initialTime = state.time;
-            while(state.time < initialTime + delta)
-                state = step(state, delta);
-            return state;
-        }, initialState));
+    const states$ = animationFrames()
+        .pipe(scan<Seconds, State[]>((lastStates, delta) => {
+            let lastState = lastStates[lastStates.length - 1];
+            if(lastState === undefined) throw new Error(`Invalid states`);
+            const initialTime = lastState.time;
+
+            let nextStates = [];
+            while(lastState.time < initialTime + delta) {
+                const state = step(lastState, delta);
+                nextStates.push(state);
+                lastState = state;
+            }
+
+            if(nextStates.length === 0)
+                return lastStates;
+
+            return nextStates;
+        }, [initialState]));
+
+    const state$ = states$.pipe(concatAll());
 
     const svg = sim(state$);
 
