@@ -1,10 +1,18 @@
-import { SubsNode } from "./subsnode";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+
+import { SubsNode, Cleanup } from "./subsnode";
 import table from "./table";
+import ball from "./ball";
 
 import { tableLength, tableHeight } from "../constants";
+import { State } from "../sim/sim";
 
-export default function sim(): SubsNode {
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+export default function sim(state$: Observable<State>): SubsNode {
+  const svg: SVGElement & Cleanup = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "svg"
+  );
 
   const margin = 0.05;
   const viewHeight = tableHeight * 2.5;
@@ -28,6 +36,7 @@ export default function sim(): SubsNode {
   svg.appendChild(transformGroup);
 
   transformGroup.appendChild(table(tableLength, tableHeight));
+  transformGroup.appendChild(ball(state$.pipe(map((s) => s.ball))));
 
   return svg;
 }
