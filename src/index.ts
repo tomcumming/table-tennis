@@ -18,8 +18,10 @@ async function start() {
 
     const state$ = animationFrames()
         .pipe(scan<Seconds, State>((state, delta) => {
-            // TODO step might be half-step
-            return step(state, delta);
+            const initialTime = state.time;
+            while(state.time < initialTime + delta)
+                state = step(state, delta);
+            return state;
         }, initialState));
 
     const svg = sim(state$);

@@ -14,7 +14,7 @@ export function v2Add(a: V2, b: V2): V2 {
   return [a[0] + b[0], a[1] + b[1]];
 }
 
-export function v2Subs(a: V2, b: V2): V2 {
+export function v2Sub(a: V2, b: V2): V2 {
   return [a[0] - b[0], a[1] - b[1]];
 }
 
@@ -45,7 +45,7 @@ export function v2Unit(a: V2): undefined | V2 {
 
 /** values >0 indicate norm is pointing at point */
 export function signedDistanceFromPlane(plane: Plane, point: V2): number {
-  const dist = v2Subs(plane.origin, point);
+  const dist = v2Sub(plane.origin, point);
   const normDist = v2Dot(plane.normal, dist);
   return normDist * -1;
 }

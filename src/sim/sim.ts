@@ -2,7 +2,7 @@ import {
   V2,
   v2Add,
   v2Muls,
-  v2Subs,
+  v2Sub,
   v2Unit,
   Ray,
   Plane,
@@ -29,6 +29,8 @@ export type Ball = {
   pos: V2;
   vel: V2;
 };
+
+const prettyMuchRollingImpactSpeed = 0.0001;
 
 export function step({ ball, time }: State, maxStep: Seconds): State {
   if (maxStep <= 0) return { ball, time };
@@ -82,20 +84,34 @@ function ballPlaneBounce(
     const hitPathRatio = ballDist / stepDist;
     const hitTime = step * hitPathRatio;
 
-    const ballPath = v2Subs(nextBall.pos, ball.pos);
+    const ballPath = v2Sub(nextBall.pos, ball.pos);
     const ballHitPos = v2Add(ball.pos, v2Muls(ballPath, hitPathRatio));
 
     const ballHitVel = v2Add(ball.vel, v2Muls(gravity, hitTime));
     const impact = v2Muls(plane.normal, -v2Dot(plane.normal, ballHitVel));
-    const bouncedVel = v2Add(impact, v2Muls(impact, cor)); //w
+    const bouncedVel = v2Add(impact, v2Muls(impact, cor));
 
-    return {
-      delta: hitTime,
-      ball: {
-        pos: ballHitPos,
-        vel: v2Add(ballHitVel, bouncedVel),
-      },
-    };
+    if (v2Mag(impact) < prettyMuchRollingImpactSpeed) {
+      const rollPath = v2Sub(
+        ball.vel,
+        v2Muls(plane.normal, v2Dot(plane.normal, ball.vel))
+      );
+      return {
+        delta: step,
+        ball: {
+          pos: v2Add(ball.pos, v2Muls(rollPath, step)),
+          vel: rollPath,
+        },
+      };
+    } else {
+      return {
+        delta: hitTime,
+        ball: {
+          pos: ballHitPos,
+          vel: v2Add(ballHitVel, bouncedVel),
+        },
+      };
+    }
   }
 }
 
