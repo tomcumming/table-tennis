@@ -7,7 +7,7 @@ import ball, { BallState } from "./ball";
 
 import { tableLength, tableHeight } from "../constants";
 import { State } from "../sim/sim";
-import bat, { BatState } from "./bat";
+import bat from "./bat";
 
 export default function sim(state$: Observable<State>): SubsElem {
   const svg: SubsElem = document.createElementNS(
@@ -38,15 +38,11 @@ export default function sim(state$: Observable<State>): SubsElem {
 
   transformGroup.appendChild(table(tableLength, tableHeight));
   transformGroup.appendChild(ball(state$.pipe(map(asBallState))));
-  transformGroup.appendChild(bat(state$.pipe(map(asBatState))));
+  transformGroup.appendChild(bat(state$.pipe(map((s) => s.bat))));
 
   return svg;
 }
 
 function asBallState({ time, ball }: State): BallState {
   return { time, ball };
-}
-
-function asBatState({ time, bat }: State): BatState {
-  return { time, bat };
 }

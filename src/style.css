@@ -32,8 +32,14 @@ body {
     stroke-linejoin: round;
 }
 
-.table-tennis .bat {
+.table-tennis .bat .surface {
     fill: #0000ff22;
     stroke: #0000ff;
     stroke-width: 0.005;
+}
+
+.table-tennis .bat .trail {
+    stroke: #ffffff44;
+    stroke-width: 0.025;
+    stroke-linecap: round;
 }

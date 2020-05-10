@@ -23,10 +23,15 @@ export type Seconds = number;
 export type State = {
   time: Seconds;
   ball: Ball;
-  bat: V2;
+  bat: Bat;
 };
 
 export type Ball = {
+  pos: V2;
+  vel: V2;
+};
+
+export type Bat = {
   pos: V2;
   vel: V2;
 };
@@ -35,7 +40,7 @@ const prettyMuchRollingImpactSpeed = 0.0001;
 
 export function step(
   { bat, ball, time }: State,
-  input: V2,
+  input: Bat,
   maxStep: Seconds
 ): State {
   if (maxStep <= 0) return { bat, ball, time };
