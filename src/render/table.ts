@@ -1,5 +1,3 @@
-import { SubsNode } from "./subsnode";
-
 function surface(
   length: number,
   heightOffFloor: number,

@@ -1,7 +1,7 @@
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 
-import { SubsNode, Cleanup } from "./subsnode";
+import { SubsElem } from "./subs-elem";
 import table from "./table";
 import ball, { BallState } from "./ball";
 
@@ -9,8 +9,8 @@ import { tableLength, tableHeight } from "../constants";
 import { State } from "../sim/sim";
 import bat, { BatState } from "./bat";
 
-export default function sim(state$: Observable<State>): SubsNode {
-  const svg: SVGElement & Cleanup = document.createElementNS(
+export default function sim(state$: Observable<State>): SubsElem {
+  const svg: SubsElem = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "svg"
   );

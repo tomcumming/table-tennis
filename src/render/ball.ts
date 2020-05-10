@@ -1,7 +1,7 @@
 import { Observable } from "rxjs";
 
 import { Ball, Seconds } from "../sim/sim";
-import { SubsNode, Cleanup } from "./subsnode";
+import { SubsElem, Cleanup } from "./subs-elem";
 import { ballRadius } from "../constants";
 
 export type BallState = {
@@ -9,7 +9,7 @@ export type BallState = {
   ball: Ball;
 };
 
-export default function ball(state$: Observable<BallState>): SubsNode {
+export default function ball(state$: Observable<BallState>): SubsElem {
   const ball: SVGElement & Cleanup = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "g"
