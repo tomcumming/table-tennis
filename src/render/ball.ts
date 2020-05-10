@@ -1,7 +1,8 @@
+import { Observable } from "rxjs";
+
 import { Ball, Seconds } from "../sim/sim";
 import { SubsNode, Cleanup } from "./subsnode";
 import { ballRadius } from "../constants";
-import { Observable } from "rxjs";
 
 export type BallState = {
   time: Seconds;

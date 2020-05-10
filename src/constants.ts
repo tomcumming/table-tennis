@@ -11,4 +11,6 @@ export const ballRadius = ballDiameter / 2;
 export const ballMass = 2.7;
 export const ballCOR = 0.9;
 
+export const batRadius = 0.2;
+
 export const gravity: V2 = [0, -9.80665];

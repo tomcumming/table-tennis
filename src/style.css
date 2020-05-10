@@ -26,8 +26,14 @@ body {
 
 .table-tennis .ball .path {
     fill: transparent;
-    stroke: #ffffff33;
+    stroke: #ffffff22;
     stroke-width: 0.04;
     stroke-linecap: round;
     stroke-linejoin: round;
+}
+
+.table-tennis .bat {
+    fill: #0000ff22;
+    stroke: #0000ff;
+    stroke-width: 0.005;
 }

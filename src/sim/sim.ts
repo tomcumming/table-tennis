@@ -23,6 +23,7 @@ export type Seconds = number;
 export type State = {
   time: Seconds;
   ball: Ball;
+  bat: V2;
 };
 
 export type Ball = {
@@ -32,8 +33,12 @@ export type Ball = {
 
 const prettyMuchRollingImpactSpeed = 0.0001;
 
-export function step({ ball, time }: State, maxStep: Seconds): State {
-  if (maxStep <= 0) return { ball, time };
+export function step(
+  { bat, ball, time }: State,
+  input: V2,
+  maxStep: Seconds
+): State {
+  if (maxStep <= 0) return { bat, ball, time };
 
   const nextBall: Ball = {
     vel: v2Add(ball.vel, v2Muls(gravity, maxStep)),
@@ -55,12 +60,14 @@ export function step({ ball, time }: State, maxStep: Seconds): State {
     return {
       time: time + bounce.delta,
       ball: bounce.ball,
+      bat: input,
     };
   }
 
   return {
     time: time + maxStep,
     ball: nextBall,
+    bat: input,
   };
 }
 

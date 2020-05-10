@@ -4,4 +4,4 @@ export type Cleanup = {
   subs?: Subscription;
 };
 
-export type SubsNode = Node & Cleanup;
+export type SubsNode = Element & Cleanup;
