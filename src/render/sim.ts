@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { map, share } from "rxjs/operators";
 
 import { SubsElem } from "./subs-elem";
 import table from "./table";
@@ -36,9 +36,11 @@ export default function sim(state$: Observable<State>): SubsElem {
 
   svg.appendChild(transformGroup);
 
+  const sharedState$ = state$.pipe(share());
+
   transformGroup.appendChild(table(tableLength, tableHeight));
-  transformGroup.appendChild(ball(state$.pipe(map(asBallState))));
-  transformGroup.appendChild(bat(state$.pipe(map((s) => s.bat))));
+  transformGroup.appendChild(ball(sharedState$.pipe(map(asBallState))));
+  transformGroup.appendChild(bat(sharedState$.pipe(map((s) => s.bat))));
 
   return svg;
 }

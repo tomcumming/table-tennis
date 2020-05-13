@@ -9,6 +9,7 @@ import {
   v2Dot,
   v2Mag,
   signedDistanceFromPlane,
+  rayCircle,
 } from "./math";
 import {
   gravity,
@@ -16,6 +17,7 @@ import {
   ballRadius,
   ballCOR,
   tableLength,
+  batRadius,
 } from "../constants";
 
 export type Seconds = number;
@@ -53,9 +55,14 @@ export function step(
     ),
   };
 
+  // TODO fix this, use the last bat pos and current pos for intersection test,
+  // then use smoothed vel for hit power
+  const nextBat = v2Add(bat.pos, v2Muls(bat.vel, maxStep));
+
   const bounces = [
     ballTableBounce(ball, nextBall, maxStep),
     ballFloorBounce(ball, nextBall, maxStep),
+    ballBatBounce(ball, nextBall, bat.pos, nextBat, maxStep),
   ]
     .flatMap((bounce) => (bounce === undefined ? [] : [bounce]))
     .sort((a, b) => a.delta - b.delta);
@@ -166,4 +173,53 @@ function ballFloorBounce(
     step,
     ballCOR
   );
+}
+
+function ballBatBounce(
+  ball: Ball,
+  nextBall: Ball,
+  bat: V2,
+  nextBat: V2,
+  step: number
+): undefined | BallBounce {
+  const ballPath = v2Sub(nextBall.pos, ball.pos);
+  const batPath = v2Sub(nextBat, bat);
+
+  const bothPath = v2Sub(ballPath, batPath);
+  const bothDist = v2Mag(bothPath);
+  const bothPathU = v2Unit(bothPath);
+  if (bothPathU) {
+    const t = rayCircle(
+      {
+        origin: ball.pos,
+        dir: bothPathU,
+      },
+      bat,
+      batRadius + ballRadius
+    );
+
+    if (t && t[0] > 0 && t[0] <= bothDist) {
+      const ratio = t[0] / bothDist;
+      const time = step / ratio;
+
+      const ballHitPos = v2Add(ball.pos, v2Muls(ballPath, ratio));
+      const batHitPos = v2Add(bat, v2Muls(batPath, ratio));
+      const ballBeforeVel = v2Add(ball.vel, v2Muls(gravity, time));
+      const normal = v2Unit(v2Sub(ballHitPos, batHitPos));
+      if (normal && v2Dot(normal, ballBeforeVel) < 0) {
+        const cor = 1;
+
+        const impact = v2Muls(normal, -v2Dot(normal, ballBeforeVel));
+        const bouncedVel = v2Add(impact, v2Muls(impact, cor));
+
+        return {
+          ball: {
+            pos: ballHitPos,
+            vel: v2Add(ballBeforeVel, bouncedVel),
+          },
+          delta: time,
+        };
+      }
+    }
+  }
 }
