@@ -58,3 +58,17 @@ export function rayClosestPoint(
   const distance = v2Sub(point, ray.origin);
   return v2Dot(ray.dir, distance);
 }
+
+/** Distance along ray to circle intersections */
+export function rayCircle(
+  ray: Ray,
+  circleOrigin: V2,
+  radius: number
+): undefined | [number, number] {
+  const tClosestPoint = rayClosestPoint(ray, circleOrigin);
+  const closestPoint = v2Add(ray.origin, v2Muls(ray.dir, tClosestPoint));
+  const len2 = v2Mag2(v2Sub(closestPoint, circleOrigin));
+  const extraDist = Math.sqrt(radius * radius - len2);
+  if(extraDist >= 0)
+    return [tClosestPoint - extraDist, tClosestPoint + extraDist];
+}
