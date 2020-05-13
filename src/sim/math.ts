@@ -49,3 +49,12 @@ export function signedDistanceFromPlane(plane: Plane, point: V2): number {
   const normDist = v2Dot(plane.normal, dist);
   return normDist * -1;
 }
+
+/** Distance along ray closest to point */
+export function rayClosestPoint(
+  ray: Ray,
+  point: V2
+): number {
+  const distance = v2Sub(point, ray.origin);
+  return v2Dot(ray.dir, distance);
+}
