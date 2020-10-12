@@ -45,12 +45,20 @@ export function norm(v: V2): undefined | V2 {
 }
 
 export function project(v: V2, unit: V2): {
-  pro: V2;
+  pro: number;
   rej: V2;
 } {
-  const pro = mul(v, dot(v, unit));
+  const pro = dot(v, unit);
   return {
     pro,
-    rej: sub(v, pro),
+    rej: sub(v, mul(v, pro)),
   };
+}
+
+export function roughlyEq(
+  v1: V2,
+  v2: V2,
+  error = 0.00001,
+): boolean {
+  return Math.abs(v1[0] - v2[0]) <= error && Math.abs(v1[1] - v2[1]) <= error;
 }
