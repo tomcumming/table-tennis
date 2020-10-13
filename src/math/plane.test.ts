@@ -33,7 +33,6 @@ Deno.test("Body distance to backface", () => {
   assertEquals(time, Number.POSITIVE_INFINITY);
 });
 
-
 Deno.test("Body distance diag up", () => {
   const plane: Plane = {
     origin: [1, 9],
