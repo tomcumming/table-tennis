@@ -10,9 +10,9 @@ export type Plane = {
 export function intersectBodyTime(
   { origin, norm }: Plane,
   body: Body,
-): number {
+): undefined | number {
   const dot = v2.dot(norm, body.vel);
-  if (dot > 0) return Number.POSITIVE_INFINITY;
+  if (dot > 0) return undefined;
 
   const path = v2.sub(origin, body.pos);
   const distToPath = v2.project(path, norm).pro;

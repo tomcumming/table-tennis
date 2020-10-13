@@ -14,9 +14,13 @@ export function ballPlaneTime(
     norm: plane.norm,
   };
   return solve((time) => {
-      const advanced = advance(ball, GRAVITY, time);
-      const hitTime = intersectBodyTime(newPlane, advanced);
+    const advanced = advance(ball, GRAVITY, time);
+    const hitTime = intersectBodyTime(newPlane, advanced);
+    if (hitTime === undefined) {
+      if (v2.dot(GRAVITY, plane.norm) > 0) return Number.POSITIVE_INFINITY;
+      else return Number.NEGATIVE_INFINITY;
+    } else {
       return -hitTime;
     }
-  );
+  });
 }

@@ -30,7 +30,7 @@ Deno.test("Body distance to backface", () => {
   };
 
   const time = intersectBodyTime(plane, body);
-  assertEquals(time, Number.POSITIVE_INFINITY);
+  assertEquals(time, undefined);
 });
 
 Deno.test("Body distance diag up", () => {
