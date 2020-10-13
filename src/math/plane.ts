@@ -1,20 +1,21 @@
 import * as v2 from "./v2.ts";
 import { V2 } from "./v2.ts";
+import { Body } from "./body.ts";
 
 export type Plane = {
   origin: V2;
   norm: V2;
 };
 
-export function intersection(
+export function intersectBodyTime(
   { origin, norm }: Plane,
-  rayOrigin: V2,
-  rayDir: V2,
-): undefined | { time: number; pos: V2 } {
-  const pathToOrigin = v2.sub(origin, rayOrigin);
-  const distanceToward = v2.project(pathToOrigin, norm);
-  const angle = 1 / v2.dot(norm, rayDir);
-  const time = angle * distanceToward.pro;
-  const pos = v2.isFinite(v2.add(rayOrigin, v2.mul(rayDir, time)));
-  return pos === undefined ? undefined : { pos, time };
+  body: Body,
+): number {
+  const dot = v2.dot(norm, body.vel);
+  if (dot > 0) return Number.POSITIVE_INFINITY;
+
+  const path = v2.sub(origin, body.pos);
+  const distToPath = v2.project(path, norm).pro;
+  const velDist = v2.project(body.vel, norm).pro;
+  return distToPath / velDist;
 }
