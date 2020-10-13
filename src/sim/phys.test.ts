@@ -23,3 +23,23 @@ Deno.test("throw ball straight up to floor", () => {
     `${result} ~= ${expectedTime}`
   );
 });
+
+
+Deno.test("throw ball diag to floor", () => {
+  const startSpeed = 20;
+
+  // Time to slow to rest = 20 / g
+  const expectedTime = (startSpeed / GRAVITY[1]) * -2;
+
+  const ball: Body = {
+    pos: [5, BALL_RADIUS],
+    vel: [startSpeed, startSpeed],
+  };
+
+  const result = ballPlaneTime(FLOOR, ball, BALL_RADIUS);
+  if(result === undefined) throw new Error(EXPECTED_SOLUTION);
+  assert(
+    Math.abs(result - expectedTime) < 0.00001,
+    `${result} ~= ${expectedTime}`
+  );
+});
