@@ -4,7 +4,7 @@ export function solve(
   allowedError = 0.00001,
   iterations = 20,
   currentTime = 1,
-  low = 0,
+  low?: number,
   high?: number,
 ): undefined | number {
   const currentValue = testFn(currentTime);
@@ -14,7 +14,7 @@ export function solve(
   }
 
   if (currentValue > 0) {
-    const nextTime = (currentTime + low) / 2;
+    const nextTime = low ? (currentTime + low) / 2 : Math.abs(currentTime) * -2;
     return solve(
       testFn,
       allowedError,

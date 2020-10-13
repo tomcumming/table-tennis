@@ -10,9 +10,10 @@ Deno.test("2x - 4 = 0", () => {
 });
 
 Deno.test(`3x + 2x - 1 = 0 where x is positive`, () => {
-  const result = solve((x) =>
-    x < 0 ? Number.NEGATIVE_INFINITY : 3 * x * x + 2 * x - 1
+  const result = solve(
+    (x) => x < 0 ? Number.NEGATIVE_INFINITY : 3 * x * x + 2 * x - 1,
+    0.001,
   );
   if (result === undefined) throw new Error(EXPECTED_SOLUTION);
-  assert(Math.abs(result - 1 / 3) <= 0.00001, "Result is roughly 1/3");
+  assert(Math.abs(result - 1 / 3) <= 0.001, "Result is roughly 1/3");
 });

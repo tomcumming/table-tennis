@@ -52,7 +52,8 @@ Deno.test("Ball over plane backwards in time", () => {
     vel: [1, -10],
   };
   const result = ballPlaneTime(FLOOR, ball, BALL_RADIUS);
-  assertEquals(result, undefined, `Backwards in time are not solved`);
+  if (result === undefined) throw new Error(EXPECTED_SOLUTION);
+  assert(result < 0, `Ball should hit plane in the past`);
 });
 
 Deno.test("Ball over plane forwards in time", () => {
