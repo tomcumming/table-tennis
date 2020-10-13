@@ -1,7 +1,7 @@
 import { assert } from "https://deno.land/std@0.74.0/testing/asserts.ts";
 import { solve } from "./solver.ts";
 
-const EXPECTED_SOLUTION = `Expected a solution to be found`;
+export const EXPECTED_SOLUTION = `Expected a solution to be found`;
 
 Deno.test("2x - 4 = 0", () => {
   const result = solve((x) => 2 * x - 4);
