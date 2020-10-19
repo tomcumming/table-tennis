@@ -1,6 +1,21 @@
 import { ZERO } from "../math/v2.ts";
+import { State, step } from "../sim/world.ts";
 
-function draw() {
+let sim: State = {
+  time: 0,
+  ball: {
+    pos: [1, 5],
+    vel: [-0.1, 0],
+  },
+};
+
+function draw(time: number) {
+  if (sim.time === 0) {
+    sim = { ...sim, time: time / 1000 };
+  } else {
+    sim = step(sim, (time / 1000) - sim.time);
+  }
+
   const canvas = document.querySelector("canvas");
   if (canvas instanceof HTMLCanvasElement) {
     const width = canvas.clientWidth;
@@ -11,15 +26,20 @@ function draw() {
 
     const ctx = canvas.getContext("2d");
     if (ctx instanceof CanvasRenderingContext2D) {
+      ctx.resetTransform();
       ctx.clearRect(0, 0, width, height);
 
-      for (let x = 0; x < width; x += 100) {
-        ctx.fillRect(x, 0, 10, height);
-      }
+      const scale = width / 10;
+      ctx.scale(scale, -scale);
+      ctx.translate(5, -8);
 
-      for (let y = 0; y < height; y += 100) {
-        ctx.fillRect(0, y, width, 10);
-      }
+      ctx.fillRect(-5, -2, 10, 2);
+
+      ctx.beginPath();
+      ctx.arc(sim.ball.pos[0], sim.ball.pos[1], 0.04, 0, Math.PI * 2);
+      ctx.fill();
+
+      window.requestAnimationFrame(draw);
 
       return;
     }
@@ -27,4 +47,4 @@ function draw() {
   throw new Error(`Could not set up context`);
 }
 
-draw();
+window.requestAnimationFrame(draw);

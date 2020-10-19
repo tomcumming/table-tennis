@@ -44,15 +44,8 @@ export function norm(v: V2): undefined | V2 {
   return isFinite(mul(v, 1 / mag(v)));
 }
 
-export function project(v: V2, unit: V2): {
-  pro: number;
-  rej: V2;
-} {
-  const pro = dot(v, unit);
-  return {
-    pro,
-    rej: sub(v, mul(v, pro)),
-  };
+export function project(v: V2, unit: V2): number {
+  return dot(v, unit);
 }
 
 export function roughlyEq(
