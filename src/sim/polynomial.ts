@@ -49,7 +49,8 @@ export function solve(
   poly: Polynomial,
   start = 0,
   iterations = 12,
-): undefined | { root: number; error: number } {
+  allowedError = 1e-6,
+): undefined | number {
   const minimumDenominator = 1e-14;
   const dir = derivative(poly);
 
@@ -62,8 +63,5 @@ export function solve(
     current = current - currentVal / currentTan;
   }
 
-  return {
-    root: current,
-    error: Math.abs(valueAt(poly, current)),
-  };
+  return Math.abs(valueAt(poly, current)) <= allowedError ? current : undefined;
 }

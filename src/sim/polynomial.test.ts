@@ -46,17 +46,15 @@ Deno.test("Find the root for 2x - 6", () => {
   const poly: Polynomial = [-6, 2];
   const result = solve(poly);
   if (!result) throw new Error(EXPECTED_SOLUTION);
-  assert(scalarRE(result.error, 0), `${result.error} ~= 0`);
-  assert(scalarRE(result.root, 3), `${result.root} ~= 3`);
+  assert(scalarRE(result, 3), `${result} ~= 3`);
 });
 
 Deno.test("Find a root for 3x^2 + 9x + 6", () => {
   const poly: Polynomial = [6, 9, 3];
   const result = solve(poly);
   if (!result) throw new Error(EXPECTED_SOLUTION);
-  assert(scalarRE(result.error, 0), `${result.error} ~= 0`);
   assert(
-    [-2, -1].some((n) => scalarRE(result.root, n)),
-    `${result.root} in [-2, -1]`,
+    [-2, -1].some((n) => scalarRE(result, n)),
+    `${result} in [-2, -1]`,
   );
 });
