@@ -51,7 +51,7 @@ export function project(v: V2, unit: V2): number {
 export function roughlyEq(
   v1: V2,
   v2: V2,
-  error = 0.00001,
+  error = 1e-6,
 ): boolean {
   return Math.abs(v1[0] - v2[0]) <= error && Math.abs(v1[1] - v2[1]) <= error;
 }
