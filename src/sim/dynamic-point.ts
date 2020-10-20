@@ -1,6 +1,6 @@
 import * as v2 from "../math/v2.ts";
 import { Plane } from "../math/plane.ts";
-import { quadratic } from "../math/polynomial.ts";
+import { Polynomial, quadratic } from "../math/polynomial.ts";
 
 type V2 = v2.V2;
 
@@ -41,4 +41,28 @@ export function timeToPlane(
     const [first, second] = solutions.sort();
     return relativeAcc > 0 ? first : second;
   }
+}
+
+export function timeToDistance(
+  distance: number,
+  dp: DynamicPoint,
+  acc: V2
+): undefined | number[] {
+  /* Solving for t:
+    p' = p + vt + at^2(1/2)
+    dist^2 = (p + vt + at^2(1/2))^2
+      = p^2 + t2(p . v) + t^2(v^2 + p . a) + t^3(v . a) + t^4(1/4)a^2
+  */
+  const eq: Polynomial = [
+    v2.dot(dp.pos, dp.pos) - distance**2,
+    2 * v2.dot(dp.pos, dp.vel),
+    v2.dot(dp.vel, dp.vel) + v2.dot(dp.pos, acc),
+    v2.dot(dp.vel, acc),
+    (1/4) * v2.dot(acc, acc)
+  ];
+
+  // We need to be careful as we might start in an unsolvable spot!
+  // ...Try a few starts? (based on the properties of the table tennis world)
+
+  throw new Error('TODO');
 }
