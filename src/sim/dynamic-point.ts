@@ -1,6 +1,6 @@
 import * as v2 from "../math/v2.ts";
 import { Plane } from "../math/plane.ts";
-import { quadratic } from "./polynomial.ts";
+import { quadratic } from "../math/polynomial.ts";
 
 type V2 = v2.V2;
 

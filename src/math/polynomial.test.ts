@@ -6,7 +6,7 @@ import {
   roughlyEq,
   solve,
 } from "./polynomial.ts";
-import { roughlyEq as scalarRE } from "../math/scalar.ts";
+import { roughlyEq as scalarRE } from "./scalar.ts";
 
 const EXPECTED_SOLUTION = `A solution was expected but not found`;
 

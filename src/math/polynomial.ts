@@ -1,4 +1,4 @@
-import { roughlyEq as scalarRE } from "../math/scalar.ts";
+import { roughlyEq as scalarRE } from "./scalar.ts";
 
 /** [a, b, c...] = a + bx + cx^2 ... */
 export type Polynomial = number[];
