@@ -2,6 +2,7 @@ import { roughlyEq as scalarRE } from "../math/scalar.ts";
 
 /** [a, b, c...] = a + bx + cx^2 ... */
 export type Polynomial = number[];
+export type Quadratic = [number, number, number];
 
 const POLY_TOO_SMALL = `Polynomial order is too low`;
 
@@ -13,12 +14,19 @@ export function roughlyEq(
   return a.length === b.length && a.every((v, i) => scalarRE(v, b[i], error));
 }
 
+export function quadratic([a, b, c]: Quadratic): undefined | [number, number] {
+  const d = Math.sqrt(b ** 2 - 4 * a * c);
+  const s1 = (-b - d) / (2 * a);
+  const s2 = (-b + d) / (2 * a);
+  return isFinite(s1) && isFinite(s2) ? [s1, s2] : undefined;
+}
+
 export function derivative(poly: Polynomial): Polynomial {
   return poly.slice(1).map((a, i) => a * (i + 1));
 }
 
 /** @returns The result and a remainder */
-export function solveRoot(
+export function applyRoot(
   poly: Polynomial,
   x: number,
 ): [Polynomial, number] {

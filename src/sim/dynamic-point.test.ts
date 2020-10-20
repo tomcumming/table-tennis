@@ -1,7 +1,4 @@
-import {
-  assert,
-  assertEquals,
-} from "https://deno.land/std@0.74.0/testing/asserts.ts";
+import { assert } from "https://deno.land/std@0.74.0/testing/asserts.ts";
 
 import { DynamicPoint, timeToPlane } from "./dynamic-point.ts";
 import { BALL_RADIUS, FLOOR, GRAVITY } from "./constants.ts";

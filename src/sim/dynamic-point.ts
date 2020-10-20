@@ -1,6 +1,6 @@
 import * as v2 from "../math/v2.ts";
-import * as solve from "./solve.ts";
 import { Plane } from "../math/plane.ts";
+import { quadratic } from "./polynomial.ts";
 
 type V2 = v2.V2;
 
@@ -36,7 +36,7 @@ export function timeToPlane(
   const relativeVel = v2.project(plane.norm, dp.vel);
   const relativeAcc = v2.project(plane.norm, acc);
 
-  const solutions = solve.quadratic(relativeAcc / 2, relativeVel, relativeDist);
+  const solutions = quadratic([relativeAcc / 2, relativeVel, relativeDist]);
   if (solutions) {
     const [first, second] = solutions.sort();
     return relativeAcc > 0 ? first : second;
