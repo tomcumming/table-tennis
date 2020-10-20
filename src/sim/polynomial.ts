@@ -14,6 +14,10 @@ export function roughlyEq(
   return a.length === b.length && a.every((v, i) => scalarRE(v, b[i], error));
 }
 
+export function valueAt(poly: Polynomial, x: number): number {
+  return poly.reduce((p, c, i) => p + c * x ** i, 0);
+}
+
 export function quadratic([a, b, c]: Quadratic): undefined | [number, number] {
   const d = Math.sqrt(b ** 2 - 4 * a * c);
   const s1 = (-b - d) / (2 * a);
@@ -39,4 +43,27 @@ export function applyRoot(
       [] as number[],
     );
   return [divided.slice(1), divided[0]];
+}
+
+export function solve(
+  poly: Polynomial,
+  start = 0,
+  iterations = 12,
+): undefined | { root: number; error: number } {
+  const minimumDenominator = 1e-14;
+  const dir = derivative(poly);
+
+  let current = start;
+  for (; iterations > 0; iterations--) {
+    const currentVal = valueAt(poly, current);
+    const currentTan = valueAt(dir, current);
+
+    if (Math.abs(currentTan) < minimumDenominator) return undefined;
+    current = current - currentVal / currentTan;
+  }
+
+  return {
+    root: current,
+    error: Math.abs(valueAt(poly, current)),
+  };
 }
