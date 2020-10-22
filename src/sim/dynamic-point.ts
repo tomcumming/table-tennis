@@ -1,6 +1,12 @@
 import * as v2 from "../math/v2.ts";
 import { Plane } from "../math/plane.ts";
-import { applyRoot, isQuadratic, Polynomial, quadratic, solve } from "../math/polynomial.ts";
+import {
+  applyRoot,
+  isQuadratic,
+  Polynomial,
+  quadratic,
+  solve,
+} from "../math/polynomial.ts";
 
 type V2 = v2.V2;
 
@@ -66,7 +72,9 @@ export function timeToDistance(
   if (root !== undefined) {
     const [eq2] = applyRoot(eq, root);
     const root2 = solve(eq2) || solve(eq2, 10);
-    if (root2 === undefined) throw new Error(`I think there should never be one root?!`);
+    if (root2 === undefined) {
+      throw new Error(`I think there should never be one root?!`);
+    }
     const [eq3] = applyRoot(eq2, root2);
     if (!isQuadratic(eq3)) throw new Error(`Duno wtf has gone wrong here`);
     return [root, root2, ...quadratic(eq3)];

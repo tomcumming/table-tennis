@@ -20,8 +20,8 @@ let sim: State = {
     },
   },
   bat: {
-    pos: [-1, 1],
-    vel: [0, 0]
+    pos: [-1.075, 1],
+    vel: [0, 0],
   },
 };
 
@@ -66,7 +66,7 @@ function draw(time: number) {
       ctx.fillStyle = "green";
       ctx.fillRect(TABLE_LENGTH / -2, TABLE_HEIGHT, TABLE_LENGTH, -0.1);
 
-      ctx.fillStyle = '#0000ff44';
+      ctx.fillStyle = "#0000ff44";
       ctx.beginPath();
       ctx.arc(sim.bat.pos[0], sim.bat.pos[1], BAT_RADIUS, 0, Math.PI * 2);
       ctx.fill();

@@ -4,7 +4,7 @@ import { DynamicPoint, timeToDistance, timeToPlane } from "./dynamic-point.ts";
 import { BALL_RADIUS, FLOOR, GRAVITY } from "./constants.ts";
 import { EXPECTED_SOLUTION } from "./phys.test.ts";
 import { roughlyEq } from "../math/scalar.ts";
-import * as v2 from '../math/v2.ts';
+import * as v2 from "../math/v2.ts";
 
 Deno.test("DynamicPoint straight up to floor", () => {
   const startSpeed = 20;
@@ -44,7 +44,6 @@ Deno.test("DynamicPoint diag up to floor", () => {
   );
 });
 
-
 Deno.test("DynamicPoint up and down to circle below", () => {
   const startSpeed = 20;
 
@@ -56,9 +55,13 @@ Deno.test("DynamicPoint up and down to circle below", () => {
     vel: [0, startSpeed],
   };
   const bat: v2.V2 = [10, 4];
-  const times = timeToDistance(1, { ...ball, pos: v2.sub(bat, ball.pos) }, GRAVITY);
+  const times = timeToDistance(
+    1,
+    { ...ball, pos: v2.sub(bat, ball.pos) },
+    GRAVITY,
+  );
   assert(
-    times.some(t => roughlyEq(t, expectedTime)),
-    `${expectedTime} in ${JSON.stringify(times)}`
+    times.some((t) => roughlyEq(t, expectedTime)),
+    `${expectedTime} in ${JSON.stringify(times)}`,
   );
 });

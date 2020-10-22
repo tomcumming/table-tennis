@@ -1,8 +1,14 @@
 import * as v2 from "../math/v2.ts";
 import { Plane } from "../math/plane.ts";
-import { advance, DynamicPoint, timeToPlane } from "./dynamic-point.ts";
+import {
+  advance,
+  DynamicPoint,
+  timeToDistance,
+  timeToPlane,
+} from "./dynamic-point.ts";
 import {
   BALL_RADIUS,
+  BAT_RADIUS,
   FLOOR,
   GRAVITY,
   TABLE_HEIGHT,
@@ -11,16 +17,17 @@ import {
 
 type V2 = v2.V2;
 
-// TODO just store last bounce position and time?
 export type BallState = {
   lastBounceTime: number;
   lastBounceState: DynamicPoint;
 };
 
+export type BatState = DynamicPoint;
+
 export type State = {
   time: number;
   ball: BallState;
-  bat: DynamicPoint;
+  bat: BatState;
 };
 
 export type BallStep =
@@ -70,6 +77,49 @@ function hitPlane(
   }
 }
 
+function hitBat(
+  state: State,
+  maxStep: number,
+): undefined | State {
+  const relativePos = v2.sub(state.ball.lastBounceState.pos, state.bat.pos);
+  const times = timeToDistance(
+    BAT_RADIUS + BALL_RADIUS,
+    { pos: relativePos, vel: state.ball.lastBounceState.vel },
+    GRAVITY,
+  )
+    .map((t) => state.ball.lastBounceTime + t)
+    .filter((t) => t >= state.time && t <= state.time + maxStep);
+  const ballStates = times
+    .flatMap<BallState>((t) => {
+      const movedBall = advance(
+        state.ball.lastBounceState,
+        GRAVITY,
+        t - state.ball.lastBounceTime,
+      );
+      const norm = v2.norm(v2.sub(movedBall.pos, state.bat.pos)) as V2;
+      const relativeVel = v2.sub(movedBall.vel, state.bat.vel);
+      const bounce = v2.dot(relativeVel, norm);
+      if (bounce < 0) {
+        return [{
+          lastBounceTime: t,
+          lastBounceState: {
+            pos: movedBall.pos,
+            vel: v2.add(movedBall.vel, v2.mul(norm, bounce * -2)),
+          },
+        }];
+      } else return [];
+    })
+    .sort((a, b) => a.lastBounceTime - b.lastBounceTime);
+
+  return ballStates[0]
+    ? {
+      time: ballStates[0].lastBounceTime,
+      ball: ballStates[0],
+      bat: state.bat,
+    }
+    : undefined;
+}
+
 function subStep(
   state: State,
   maxStep: number,
@@ -89,6 +139,11 @@ function subStep(
     ) {
       return hitTable;
     }
+  }
+
+  {
+    const hitB = hitBat(state, maxStep);
+    if (hitB) return hitB;
   }
 
   return {
