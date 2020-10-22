@@ -1,11 +1,15 @@
-import { ZERO } from "../math/v2.ts";
+import { GRAVITY } from "../sim/constants.ts";
+import { advance } from "../sim/dynamic-point.ts";
 import { State, step } from "../sim/world.ts";
 
 let sim: State = {
   time: 0,
   ball: {
-    pos: [1, 5],
-    vel: [-0.1, 0],
+    lastBounceTime: 0,
+    lastBounceState: {
+      pos: [1, 5],
+      vel: [-0.1, 0],
+    },
   },
 };
 
@@ -15,6 +19,12 @@ function draw(time: number) {
   } else {
     sim = step(sim, (time / 1000) - sim.time);
   }
+
+  const ball = advance(
+    sim.ball.lastBounceState,
+    GRAVITY,
+    sim.time - sim.ball.lastBounceTime,
+  );
 
   const canvas = document.querySelector("canvas");
   if (canvas instanceof HTMLCanvasElement) {
@@ -36,7 +46,7 @@ function draw(time: number) {
       ctx.fillRect(-5, -2, 10, 2);
 
       ctx.beginPath();
-      ctx.arc(sim.ball.pos[0], sim.ball.pos[1], 0.04, 0, Math.PI * 2);
+      ctx.arc(ball.pos[0], ball.pos[1], 0.04, 0, Math.PI * 2);
       ctx.fill();
 
       window.requestAnimationFrame(draw);

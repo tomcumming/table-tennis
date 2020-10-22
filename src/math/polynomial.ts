@@ -18,11 +18,11 @@ export function valueAt(poly: Polynomial, x: number): number {
   return poly.reduce((p, c, i) => p + c * x ** i, 0);
 }
 
-export function quadratic([a, b, c]: Quadratic): undefined | [number, number] {
+export function quadratic([c, b, a]: Quadratic): [] | [number, number] {
   const d = Math.sqrt(b ** 2 - 4 * a * c);
   const s1 = (-b - d) / (2 * a);
   const s2 = (-b + d) / (2 * a);
-  return isFinite(s1) && isFinite(s2) ? [s1, s2] : undefined;
+  return isFinite(s1) && isFinite(s2) ? [s1, s2] : [];
 }
 
 export function derivative(poly: Polynomial): Polynomial {
