@@ -18,6 +18,10 @@ export function valueAt(poly: Polynomial, x: number): number {
   return poly.reduce((p, c, i) => p + c * x ** i, 0);
 }
 
+export function isQuadratic(poly: Polynomial): poly is Quadratic {
+  return poly.length === 3;
+}
+
 export function quadratic([c, b, a]: Quadratic): [] | [number, number] {
   const d = Math.sqrt(b ** 2 - 4 * a * c);
   const s1 = (-b - d) / (2 * a);
@@ -48,7 +52,7 @@ export function applyRoot(
 export function solve(
   poly: Polynomial,
   start = 0,
-  iterations = 12,
+  iterations = 20,
   allowedError = 1e-6,
 ): undefined | number {
   const minimumDenominator = 1e-14;

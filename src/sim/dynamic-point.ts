@@ -1,6 +1,6 @@
 import * as v2 from "../math/v2.ts";
 import { Plane } from "../math/plane.ts";
-import { Polynomial, quadratic } from "../math/polynomial.ts";
+import { applyRoot, isQuadratic, Polynomial, quadratic, solve } from "../math/polynomial.ts";
 
 type V2 = v2.V2;
 
@@ -47,7 +47,7 @@ export function timeToDistance(
   distance: number,
   dp: DynamicPoint,
   acc: V2,
-): undefined | number[] {
+): number[] {
   /* Solving for t:
     p' = p + vt + at^2(1/2)
     dist^2 = (p + vt + at^2(1/2))^2
@@ -61,8 +61,16 @@ export function timeToDistance(
     (1 / 4) * v2.dot(acc, acc),
   ];
 
-  // We need to be careful as we might start in an unsolvable spot!
-  // ...Try a few starts? (based on the properties of the table tennis world)
-
-  throw new Error("TODO");
+  // try at t = 0 or t = 10, that should be enough...
+  const root = solve(eq) || solve(eq, 10);
+  if (root !== undefined) {
+    const [eq2] = applyRoot(eq, root);
+    const root2 = solve(eq2) || solve(eq2, 10);
+    if (root2 === undefined) throw new Error(`I think there should never be one root?!`);
+    const [eq3] = applyRoot(eq2, root2);
+    if (!isQuadratic(eq3)) throw new Error(`Duno wtf has gone wrong here`);
+    return [root, root2, ...quadratic(eq3)];
+  } else {
+    return [];
+  }
 }
