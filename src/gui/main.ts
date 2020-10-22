@@ -1,13 +1,20 @@
-import { GRAVITY } from "../sim/constants.ts";
+import {
+  BALL_RADIUS,
+  GRAVITY,
+  TABLE_HEIGHT,
+  TABLE_LENGTH,
+} from "../sim/constants.ts";
 import { advance } from "../sim/dynamic-point.ts";
 import { State, step } from "../sim/world.ts";
+
+const TIME_SCALE = 0.5;
 
 let sim: State = {
   time: 0,
   ball: {
     lastBounceTime: 0,
     lastBounceState: {
-      pos: [1, 5],
+      pos: [-1, 2.5],
       vel: [-0.1, 0],
     },
   },
@@ -15,9 +22,9 @@ let sim: State = {
 
 function draw(time: number) {
   if (sim.time === 0) {
-    sim = { ...sim, time: time / 1000 };
+    sim = { ...sim, time: TIME_SCALE * time / 1000 };
   } else {
-    sim = step(sim, (time / 1000) - sim.time);
+    sim = step(sim, TIME_SCALE * (time / 1000) - sim.time);
   }
 
   const ball = advance(
@@ -39,15 +46,20 @@ function draw(time: number) {
       ctx.resetTransform();
       ctx.clearRect(0, 0, width, height);
 
-      const scale = width / 10;
+      const scale = width / 4;
       ctx.scale(scale, -scale);
-      ctx.translate(5, -8);
+      ctx.translate(2, -3);
 
+      ctx.fillStyle = "grey";
       ctx.fillRect(-5, -2, 10, 2);
 
+      ctx.fillStyle = "black";
       ctx.beginPath();
-      ctx.arc(ball.pos[0], ball.pos[1], 0.04, 0, Math.PI * 2);
+      ctx.arc(ball.pos[0], ball.pos[1], BALL_RADIUS, 0, Math.PI * 2);
       ctx.fill();
+
+      ctx.fillStyle = "green";
+      ctx.fillRect(TABLE_LENGTH / -2, TABLE_HEIGHT, TABLE_LENGTH, -0.1);
 
       window.requestAnimationFrame(draw);
 

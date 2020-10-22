@@ -9,4 +9,6 @@ export const FLOOR: Plane = {
   norm: [0, 1],
 };
 
-export const BALL_RADIUS = 0.2;
+export const BALL_RADIUS = 0.02;
+export const TABLE_LENGTH = 2.74;
+export const TABLE_HEIGHT = 0.76;
