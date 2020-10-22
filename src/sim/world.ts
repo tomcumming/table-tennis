@@ -20,6 +20,7 @@ export type BallState = {
 export type State = {
   time: number;
   ball: BallState;
+  bat: DynamicPoint;
 };
 
 export type BallStep =
@@ -64,6 +65,7 @@ function hitPlane(
     return {
       time: hitTime,
       ball,
+      bat: state.bat,
     };
   }
 }
@@ -92,6 +94,7 @@ function subStep(
   return {
     time: state.time + maxStep,
     ball: state.ball,
+    bat: state.bat,
   };
 }
 

@@ -12,3 +12,5 @@ export const FLOOR: Plane = {
 export const BALL_RADIUS = 0.02;
 export const TABLE_LENGTH = 2.74;
 export const TABLE_HEIGHT = 0.76;
+
+export const BAT_RADIUS = 0.25;

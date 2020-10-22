@@ -1,5 +1,6 @@
 import {
   BALL_RADIUS,
+  BAT_RADIUS,
   GRAVITY,
   TABLE_HEIGHT,
   TABLE_LENGTH,
@@ -17,6 +18,10 @@ let sim: State = {
       pos: [-1, 2.5],
       vel: [-0.1, 0],
     },
+  },
+  bat: {
+    pos: [-1, 1],
+    vel: [0, 0]
   },
 };
 
@@ -60,6 +65,11 @@ function draw(time: number) {
 
       ctx.fillStyle = "green";
       ctx.fillRect(TABLE_LENGTH / -2, TABLE_HEIGHT, TABLE_LENGTH, -0.1);
+
+      ctx.fillStyle = '#0000ff44';
+      ctx.beginPath();
+      ctx.arc(sim.bat.pos[0], sim.bat.pos[1], BAT_RADIUS, 0, Math.PI * 2);
+      ctx.fill();
 
       window.requestAnimationFrame(draw);
 
