@@ -8,7 +8,9 @@ import {
   timeToPlane,
 } from "./dynamic-point.ts";
 import {
+  BALL_BOUNCE,
   BALL_RADIUS,
+  BAT_BOUNCE,
   BAT_RADIUS,
   FLOOR,
   GRAVITY,
@@ -67,7 +69,10 @@ function hitPlane(
       lastBounceTime: hitTime,
       lastBounceState: {
         pos: movedBall.pos,
-        vel: v2.add(movedBall.vel, v2.mul(planeAndRadius.norm, bounce * -2)),
+        vel: v2.add(
+          movedBall.vel,
+          v2.mul(planeAndRadius.norm, bounce * -(1 + BALL_BOUNCE)),
+        ),
       },
     };
   }
@@ -77,7 +82,10 @@ function hitBat(
   state: State,
   maxStep: number,
 ): undefined | BallState {
-  const batAtLastBounce = advanceConstant(state.bat, state.ball.lastBounceTime - state.time);
+  const batAtLastBounce = advanceConstant(
+    state.bat,
+    state.ball.lastBounceTime - state.time,
+  );
   const relativeInitialPos = v2.sub(
     state.ball.lastBounceState.pos,
     batAtLastBounce.pos,
@@ -108,7 +116,10 @@ function hitBat(
           lastBounceTime: t,
           lastBounceState: {
             pos: movedBall.pos,
-            vel: v2.add(movedBall.vel, v2.mul(norm, bounce * -2)),
+            vel: v2.add(
+              movedBall.vel,
+              v2.mul(norm, bounce * -(1 + BALL_BOUNCE * BAT_BOUNCE)),
+            ),
           },
         }];
       } else return [];

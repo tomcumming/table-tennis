@@ -82,7 +82,6 @@ Deno.test("DynamicPoint drop to static circle below", () => {
   const expectedTime = Math.sqrt(
     -(startHeight - hitHeight) / (GRAVITY[1] * 0.5),
   );
-  console.log({ expectedTime });
 
   const times = timeToDistance(r, ball, GRAVITY);
   assert(

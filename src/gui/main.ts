@@ -6,30 +6,45 @@ import {
   TABLE_HEIGHT,
   TABLE_LENGTH,
 } from "../sim/constants.ts";
-import { advance } from "../sim/dynamic-point.ts";
+import { advance, DynamicPoint } from "../sim/dynamic-point.ts";
 import { State, step } from "../sim/world.ts";
 
 const TIME_SCALE = 0.5;
 
+const MOUSE_SMOOTHING_FRAMES = 8;
+
+const INITIAL_BALL_STATE: DynamicPoint = {
+  pos: [-1, 2.5],
+  vel: [-0.1, 0],
+};
+
 let batPosScr: v2.V2;
+let batPoss: v2.V2[] = [];
 
 let sim: State = {
   time: 0,
   ball: {
     lastBounceTime: 0,
-    lastBounceState: {
-      pos: [-1, 2.5],
-      vel: [-0.1, 0],
-    },
+    lastBounceState: INITIAL_BALL_STATE,
   },
   bat: {
-    pos: [-1.075, 1],
+    pos: [0, 0],
     vel: [0, 0],
   },
 };
 
 function onMouseMove(e: MouseEvent) {
   batPosScr = [e.clientX, e.clientY];
+}
+
+function onKeyDown(e: KeyboardEvent) {
+  console.log(e);
+  if (e.code === "Space") {
+    sim = {
+      ...sim,
+      ball: { lastBounceTime: sim.time, lastBounceState: INITIAL_BALL_STATE },
+    };
+  }
 }
 
 function draw(time: number) {
@@ -43,12 +58,23 @@ function draw(time: number) {
 
     const scale = width / 4;
 
-    const batPos: undefined | v2.V2 = batPosScr
+    const curBatPos: undefined | v2.V2 = batPosScr
       ? v2.sub(
         v2.mul(batPosScr, [1 / scale, -1 / scale]),
         [2, -3],
       )
       : undefined;
+
+    if (curBatPos) {
+      batPoss = [
+        curBatPos,
+        ...batPoss.reverse(),
+      ].slice(0, MOUSE_SMOOTHING_FRAMES).reverse();
+    }
+    const avgBatPos = batPoss.length === 0 ? sim.bat.pos : v2.mul(
+      batPoss.reduce((p, c) => v2.add(p, c), v2.ZERO),
+      1 / batPoss.length,
+    );
 
     if (sim.time === 0) {
       sim = { ...sim, time: TIME_SCALE * time / 1000 };
@@ -56,7 +82,7 @@ function draw(time: number) {
       sim = step(
         sim,
         TIME_SCALE * (time / 1000) - sim.time,
-        batPos || sim.bat.pos,
+        avgBatPos || sim.bat.pos,
       );
     }
 
@@ -101,5 +127,7 @@ function draw(time: number) {
 document
   .querySelector("canvas")
   ?.addEventListener("mousemove", onMouseMove);
+
+window.addEventListener("keydown", onKeyDown);
 
 window.requestAnimationFrame(draw);
