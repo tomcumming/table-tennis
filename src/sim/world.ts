@@ -77,13 +77,14 @@ function hitBat(
   state: State,
   maxStep: number,
 ): undefined | BallState {
+  const batAtLastBounce = advanceConstant(state.bat, state.ball.lastBounceTime - state.time);
   const relativeInitialPos = v2.sub(
     state.ball.lastBounceState.pos,
-    state.bat.pos,
+    batAtLastBounce.pos,
   );
   const relativeInitialVel = v2.sub(
     state.ball.lastBounceState.vel,
-    state.bat.vel,
+    batAtLastBounce.vel,
   );
 
   const times = timeToDistance(
@@ -97,11 +98,10 @@ function hitBat(
     .flatMap<BallState>((t) => {
       const deltaTime = t - state.ball.lastBounceTime;
       const movedBall = advance(state.ball.lastBounceState, GRAVITY, deltaTime);
-      const movedBat = advanceConstant(state.bat, deltaTime);
+      const movedBat = advanceConstant(batAtLastBounce, deltaTime);
       const norm = v2.norm(v2.sub(movedBall.pos, movedBat.pos)) as V2;
       const relativeVel = v2.sub(movedBall.vel, movedBat.vel);
       const bounce = v2.dot(relativeVel, norm);
-      console.log("Hit with relative vel", v2.mag(relativeVel), relativeVel);
       console.log("Bounce", bounce);
       if (bounce < 0) {
         return [{
