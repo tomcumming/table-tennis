@@ -1,3 +1,4 @@
+import * as v2 from "../math/v2.ts";
 import {
   BALL_RADIUS,
   BAT_RADIUS,
@@ -9,6 +10,8 @@ import { advance } from "../sim/dynamic-point.ts";
 import { State, step } from "../sim/world.ts";
 
 const TIME_SCALE = 0.5;
+
+let batPosScr: v2.V2;
 
 let sim: State = {
   time: 0,
@@ -25,19 +28,11 @@ let sim: State = {
   },
 };
 
+function onMouseMove(e: MouseEvent) {
+  batPosScr = [e.clientX, e.clientY];
+}
+
 function draw(time: number) {
-  if (sim.time === 0) {
-    sim = { ...sim, time: TIME_SCALE * time / 1000 };
-  } else {
-    sim = step(sim, TIME_SCALE * (time / 1000) - sim.time);
-  }
-
-  const ball = advance(
-    sim.ball.lastBounceState,
-    GRAVITY,
-    sim.time - sim.ball.lastBounceTime,
-  );
-
   const canvas = document.querySelector("canvas");
   if (canvas instanceof HTMLCanvasElement) {
     const width = canvas.clientWidth;
@@ -46,12 +41,36 @@ function draw(time: number) {
     canvas.width = width;
     canvas.height = height;
 
+    const scale = width / 4;
+
+    const batPos: undefined | v2.V2 = batPosScr
+      ? v2.sub(
+        v2.mul(batPosScr, [1 / scale, -1 / scale]),
+        [2, -3],
+      )
+      : undefined;
+
+    if (sim.time === 0) {
+      sim = { ...sim, time: TIME_SCALE * time / 1000 };
+    } else {
+      sim = step(
+        sim,
+        TIME_SCALE * (time / 1000) - sim.time,
+        batPos || sim.bat.pos,
+      );
+    }
+
+    const ball = advance(
+      sim.ball.lastBounceState,
+      GRAVITY,
+      sim.time - sim.ball.lastBounceTime,
+    );
+
     const ctx = canvas.getContext("2d");
     if (ctx instanceof CanvasRenderingContext2D) {
       ctx.resetTransform();
       ctx.clearRect(0, 0, width, height);
 
-      const scale = width / 4;
       ctx.scale(scale, -scale);
       ctx.translate(2, -3);
 
@@ -78,5 +97,9 @@ function draw(time: number) {
   }
   throw new Error(`Could not set up context`);
 }
+
+document
+  .querySelector("canvas")
+  ?.addEventListener("mousemove", onMouseMove);
 
 window.requestAnimationFrame(draw);

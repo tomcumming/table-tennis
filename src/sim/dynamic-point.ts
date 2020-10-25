@@ -33,6 +33,16 @@ export function advance(
   };
 }
 
+export function advanceConstant(
+  dp: DynamicPoint,
+  time: number,
+): DynamicPoint {
+  return {
+    pos: v2.add(dp.pos, v2.mul(time, dp.vel)),
+    vel: dp.vel,
+  };
+}
+
 export function timeToPlane(
   plane: Plane,
   dp: DynamicPoint,
@@ -73,7 +83,8 @@ export function timeToDistance(
     const [eq2] = applyRoot(eq, root);
     const root2 = solve(eq2) || solve(eq2, 10);
     if (root2 === undefined) {
-      throw new Error(`I think there should never be one root?!`);
+      console.warn(`I think there should never be one root?!`, eq, eq2);
+      return [];
     }
     const [eq3] = applyRoot(eq2, root2);
     if (!isQuadratic(eq3)) throw new Error(`Duno wtf has gone wrong here`);
